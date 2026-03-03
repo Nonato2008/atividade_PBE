@@ -54,7 +54,7 @@ const produtoController = {
     cadastrarProduto: async (req, res) => {
         try {
 
-            const { idCategoria, nomeProduto, valorProduto } = req.body;
+            const { idCategoria, nomeProduto, valorProduto, dataCad } = req.body;
 
             const vinculoImagem = req.file.path
 
@@ -63,7 +63,7 @@ const produtoController = {
             }
 
             const result = await produtoModel.cadastrarProduto(
-                idCategoria, nomeProduto, valorProduto, vinculoImagem
+                idCategoria, nomeProduto, valorProduto, vinculoImagem, dataCad
             )
 
             if (!req.file) {

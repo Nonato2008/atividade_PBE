@@ -11,7 +11,7 @@ const produtoModel = {
     selecionarUm: async(idProduto) => {
         const sql = "SELECT * FROM produtos WHERE idProduto = ?";
         const values = [idProduto];
-        const [rows] = await pool.execute(sql,values );
+        const [rows] = await pool.query(sql,values );
         console.log(rows)
         return rows;
     },
