@@ -24,9 +24,9 @@ const categoriaModel = {
         return rows
     },
 
-    atualizar: async (descricaoCategoria, ) => {
-        const sql = 'UPDATE categoria SET descricaoCategoria = ?'
-        const values = [descricaoCategoria]
+    atualizar: async (descricaoCategoria, id) => {
+        const sql = 'UPDATE categoria SET descricaoCategoria = ? WHERE idCategoria = ?'
+        const values = [descricaoCategoria, id]
         const [rows] = await pool.execute (sql,values)
         console.log(rows);
         return rows
