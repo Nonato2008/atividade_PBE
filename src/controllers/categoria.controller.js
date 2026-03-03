@@ -11,7 +11,7 @@ const categoriaController = {
                 return res.status(404).json({ message: "Nenhuma categoria encontrada" });
             }
 
-            res.status(200).json({ data: produtos });
+            res.status(200).json({ data: result });
 
         } catch (error) {
             console.error(error);
