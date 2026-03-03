@@ -2,9 +2,9 @@ import pool from "../config/db.js";
 
 
 const categoriaModel = {
-    cadastrar: async (descricaoCategoria,dataCad) => {
-        const sql = 'INSERT INTO categoria(descricaoCategoria, dataCad) values (?, ?)'
-        const values = [descricaoCategoria,dataCad];
+    cadastrar: async (descricaoCategoria) => {
+        const sql = 'INSERT INTO categoria(descricaoCategoria) values ( ?)'
+        const values = [descricaoCategoria];
         const [rows] = await pool.execute(sql, values);
         return rows;
     },
