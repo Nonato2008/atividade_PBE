@@ -24,7 +24,7 @@ const categoriaController = {
 
             const { descricaoCategoria } = req.body;
 
-            if (!dataCad || !isNaN(descricaoCategoria) || !descricaoCategoria) {
+            if (!isNaN(descricaoCategoria) || !descricaoCategoria) {
                 return res.status(400).json({ message: "Insira dados válidos" })
             }
 
@@ -34,11 +34,11 @@ const categoriaController = {
 
             if (result.affectedRows === 1) {
                 res.status(201).json({
-                    message: "Produto cadastrado com sucesso",
+                    message: "Categoria cadastrado com sucesso",
                     result: result
                 })
             } else {
-                throw error("ocorreu um erro ao cadastrar o produto");
+                throw error("ocorreu um erro ao cadastrar o categoria");
             }
 
         } catch (error) {
