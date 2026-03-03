@@ -52,9 +52,7 @@ const categoriaController = {
 
             const id = req.params.id
 
-            if (!idCategoria || isNaN(idCategoria)) {
-                return res.status(404).json({ message: 'ID inválido' })
-            }
+           
 
             const result = await categoriaModel.deletar(id)
 
@@ -78,7 +76,7 @@ const categoriaController = {
 
             const id = req.query.id
 
-            if (!descricaoCategoria || !isNaN(descricaoCategoria) || !idCategoria || isNaN(idCategoria)) {
+            if (!descricaoCategoria || !isNaN(descricaoCategoria)) {
                 return res.status(404).json({ message: 'Valores inválidos' })
             }
 
