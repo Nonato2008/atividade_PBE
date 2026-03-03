@@ -29,7 +29,7 @@ const categoriaController = {
             }
 
             const result = await categoriaModel.cadastrar(
-                dataCad, descricaoCategoria
+                descricaoCategoria
             )
 
             if (result.affectedRows === 1) {
@@ -74,13 +74,15 @@ const categoriaController = {
     atualizarCategoria: async (req, res) => {
         try {
 
-            const {descricaoCategoria, idCategoria} = req.body;
+            const { descricaoCategoria, } = req.body;
 
-            if(!descricaoCategoria || !isNaN(descricaoCategoria) || !idCategoria || isNaN(idCategoria)){
-                return res.status(404).json({message: 'Valores inválidos'})
+            const id = req.query.id
+
+            if (!descricaoCategoria || !isNaN(descricaoCategoria) || !idCategoria || isNaN(idCategoria)) {
+                return res.status(404).json({ message: 'Valores inválidos' })
             }
 
-            const result = await categoriaModel.atualizar(descricaoCategoria)
+            const result = await categoriaModel.atualizar(descricaoCategoria,id)
 
 
             if (result.affectedRows === 1) {
