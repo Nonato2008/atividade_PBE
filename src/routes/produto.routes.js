@@ -3,8 +3,14 @@ import { Router } from "express";
 
 const produtoRoutes = Router();
 
-produtoRoutes.post('/produtos ', produtoController.criarProduto)
-produtoRoutes.get('/produtos', produtoController.selecionarTodos)
-produtoRoutes.get('/produtos',produtoController.deletarProduto)
+produtoRoutes.post('/produtos/cadatro ', produtoController.cadastrarProduto)
+
+produtoRoutes.get('/produtos/buscar', produtoController.selecionarProdutos)
+
+produtoRoutes.get('/produtos/buscarUm', produtoController.selecionarUm)
+
+produtoRoutes.delete('/produtos/deletar', produtoController.deletarProduto)
+
+produtoRoutes.put('/produtos/atualizar', produtoController.atualizarProduto)
 
 export default produtoRoutes

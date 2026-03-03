@@ -2,18 +2,37 @@ import pool from "../config/db.js";
 
 
 const categoriaModel = {
-    insert: async (cCategoria) => {
+    cadastrar: async (descricaoCategoria,dataCad) => {
         const sql = 'INSERT INTO categoria(descricaoCategoria, dataCad) values (?, ?)'
-        const values = [cCategoria.descricaoCategoria, cCategoria.dataCad];
+        const values = [descricaoCategoria,dataCad];
         const [rows] = await pool.execute(sql, values);
         return rows;
     },
 
-    selectAll: async () => {
-        const sql = 'select * from produtos inner join categoria on produtos.idCategoria = categoria.idCategoria'
-        const [rows] = await pool.execute(sql);
+    consultar: async (idCategoria) => {
+        const sql = 'SELECT * FROM categoria'
+        const [rows] = await pool.query(sql);
+        console.log(rows);
         return rows;
+    },
+
+    deletar: async (idCategoria) => {
+        const sql = 'DELETE FROM categoria WHERE idProduto = ?'
+        const values = [idCategoria]
+        const [rows] = await pool.execute(sql,values)
+        console.log(rows);
+        return rows
+    },
+
+    atualizar: async (descricaoCategoria, ) => {
+        const sql = 'UPDATE categoria SET descricaoCategoria = ?'
+        const values = [descricaoCategoria]
+        const [rows] = await pool.execute (sql,values)
+        console.log(rows);
+        return rows
     }
+
+    
 }
 
 export default categoriaModel

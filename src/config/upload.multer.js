@@ -2,7 +2,6 @@ import multer from "multer";
 import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs';
-import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
 const baseUploadDir = path.resolve(process.cwd(), 'uploads');

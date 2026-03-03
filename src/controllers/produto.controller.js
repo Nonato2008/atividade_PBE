@@ -1,91 +1,144 @@
 import produtoModel from "../models/produto.model.js";
-import xmlModel from "../models/produto.model.js";
-import xml2js from 'xml2js'
 
 const produtoController = {
 
-    criarProduto: async (req, res) => {
+    selecionarProdutos: async (req, res) => {
         try {
-            const xml = req.body
 
-            xml2js.parseString(xml, async (err, json) => {
-                if (err) {
-                    return res.status(400).json({ message: 'XML inválido' });
-                }
-
-                const produto = json.produto;
-
-                console.log(produto)
-
-                const result = await produtoModel.insert({
-                    idCategoria: produto.idCategoria[0],
-                    nomeProduto: produto.nomeProduto[0],
-                    valorProduto: produto.valorProduto[0],
-                    quanvinculoImagemtidade: produto.vinculoImagem[0],
-                    dataCad: produto.dataCad[0]
-                });
-
-                if (result.insertId > 0) {
-                    return res.status(201).json({ message: 'Registo realizado com sucesso' });
-                }
-                return res.status(400).json({ message: 'Ocorreu um erro ao inserir o produto' });
-
-            })
-        } catch (error) {
-            console.error(error);
-            res.status(500).JSON({ message: 'Ocorreu um erro no servidor', errorMessage: error.message })
-        }
-    },
-
-    selecionarTodos: async (req, res) => {
-        try {
-            const result = await xmlModel.selectAll();
-
-            if (result.length > 0) {
-                const estrutura = new xml2js.Builder({
-                    rootName: 'produtos',
-                    xmldec: { version: '1.0', encoding: 'UTF-8' }
-                });
-
-                const xml = estrutura.buildObject({ produto: result });
-                res.set('Content-Type', 'application/xml')
-                return res.status(200).send(xml)
+            const produtos = await produtoModel.selecionarProdutos();
+            if (!produtos || produtos.length === 0) {
+                return res.status(404).json({ message: "Nenhum produto encontrado" });
             }
-
-            res.status(200).json({ message: 'Não há dados para serem exebidos' });
+            res.status(200).json({ data: produtos });
 
         } catch (error) {
             console.error(error);
-            res.status(500).JSON({ message: 'Ocorreu um erro no servidor', errorMessage: error.message })
+            res.status(500).json({ message: "Ocorreu um erro no servidor", errorMessage: error.message });
         }
     },
 
-    deletarProduto: async (req, res) => {
+    selecionarUm: async (req, res) => {
         try {
-            const result = await xmlModel.selectOne(idProduto)
-            
-            if (result > 1) {
-                await produtoModel.delete(idProduto)
-                return res.status(201).json({ message: 'Produto deletado com sucesso' });
+
+            const produto = await produtoModel.selecionarUm();
+            if (!produto || produto.length === 0) {
+                return res.status(404).json({ message: "Nenhum produto encontrado" })
             }
-            return res.status(400).json({ message: 'Ocorreu um erro ao deletar o produto' });
-
-
+            res.status(200).json({ data: produto });
 
         } catch (error) {
-            console.error(error);
-            res.status(500).JSON({ message: 'Ocorreu um erro no servidor', errorMessage: error.message })
+            console.error(error)
+            res.status(500).json({ message: "Ocorreu um erro no servidor", errorMessage: error.message });
         }
     },
 
-    atualizarProduto: async (req, res) => {
-        try {
-
-        } catch (error) {
-
-        }
+    upload: async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({message: "Arquivo não enviado"});
+      }
+      res.status(200).json({
+        message: "Upload realizado com sucesso",
+        file: {
+          filename: req.file.filename,
+          size: req.file.size,
+          mimetype: req.file.mimetype,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro no Servidor", errorMessage: error.message,});
     }
+  },
+
+    cadastrarProduto: async (req, res) => {
+        try {
+
+            const { idCategoria, nomeProduto, valorProduto } = req.body;
+
+            const vinculoImagem = req.file.path
+
+            if (!idCategoria || isNaN(idCategoria) || !nomeProduto || isNaN(valorProduto)) {
+                return res.status(400).json({ message: "Insira dados válidos" })
+            }
+
+            const result = await produtoModel.cadastrarProduto(
+                idCategoria, nomeProduto, valorProduto, vinculoImagem
+            )
+
+            if (!req.file) {
+                return res.status(400).json({
+                    message: "Arquivo não enviado",
+                });
+            }
+
+            if (result.affectedRows === 1) {
+                res.status(201).json({
+                    message: "Produto cadastrado com sucesso",
+                    result: result,
+                });
+            } else {
+                throw error("ocorreu um erro ao cadastrar o produto");
+            }
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({message: "Erro no Servidor",errorMessage: error.message,})
+        }
+    },
+
+    deletarProduto:async (req,res) => {
+        try {
+            
+            const {idProduto} = req.body;
+
+            if(!idProduto || isNaN(idProduto)){
+                return res.status(404).json({message: 'ID inválido'})
+            }
+
+            
+
+            const result = await produtoModel.deletarProduto(idProduto)
+
+            if (result.affectedRows === 1) {
+                res.status(201).json({
+                    message: "Produto deletado com sucesso",
+                    result: result,
+                });
+            }
+
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({message: "Erro no Servidor",errorMessage: error.message,})
+        }
+    },
+
+    atualizarProduto: async (req,res) => {
+        try {
+            
+            const {nomeProduto, valorProduto, idProduto} = req.body;
+    
+            if(!nomeProduto || !valorProduto || isNaN(valorProduto)|| !idProduto || isNaN(idProduto)){
+                return res.status(404).json({message: 'Valores inválidos'})
+            }
+
+            const result = await produtoModel.atualizarProduto(nomeProduto, valorProduto);
+
+            if (result.affectedRows === 1) {
+                res.status(201).json({
+                    message: "Produto atualizado com sucesso",
+                    result: result,
+                });
+            }
+
+        } catch (error) {
+            
+        }
+        console.error(error);
+            res.status(500).json({message: "Erro no Servidor",errorMessage: error.message,})
+    }
+
+
 }
 
-
-export default produtoController;
+export default produtoController
