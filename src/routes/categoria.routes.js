@@ -3,12 +3,12 @@ import { Router }  from "express"
 
 const categoriaRoutes = Router();
 
-categoriaRoutes.post('/categoria/cadastro', categoriaController.cadastrarCategoria)
+categoriaRoutes.post('/categoria', categoriaController.cadastrarCategoria)
 
-categoriaRoutes.get('/categoria/buscar', categoriaController.consultarCategoria )
+categoriaRoutes.get('/categoria', categoriaController.consultarCategoria )
 
-categoriaRoutes.delete('/categoria/deletar', categoriaController.deletarCategoria)
+categoriaRoutes.delete('/categoria/:id', categoriaController.deletarCategoria)
 
-categoriaRoutes.put('/categoria/atualizar', categoriaController.atualizarCategoria)
+categoriaRoutes.put('/categoria', categoriaController.atualizarCategoria)
 
 export default categoriaRoutes

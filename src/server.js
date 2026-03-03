@@ -5,6 +5,7 @@ import 'dotenv/config';
 import produtoRoutes from "./routes/produto.routes.js";
 
 const app = express();
+app.use(express.json());
 app.use('/', categoriaRoutes)
 app.use('/', produtoRoutes)
 

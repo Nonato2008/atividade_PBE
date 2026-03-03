@@ -33,37 +33,39 @@ const produtoController = {
     },
 
     upload: async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({message: "Arquivo não enviado"});
-      }
-      res.status(200).json({
-        message: "Upload realizado com sucesso",
-        file: {
-          filename: req.file.filename,
-          size: req.file.size,
-          mimetype: req.file.mimetype,
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erro no Servidor", errorMessage: error.message,});
-    }
-  },
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: "Arquivo não enviado" });
+            }
+            res.status(200).json({
+                message: "Upload realizado com sucesso",
+                file: {
+                    filename: req.file.filename,
+                    size: req.file.size,
+                    mimetype: req.file.mimetype,
+                },
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Erro no Servidor", errorMessage: error.message, });
+        }
+    },
 
     cadastrarProduto: async (req, res) => {
         try {
+            console.log(req.body);
 
-            const { idCategoria, nomeProduto, valorProduto, dataCad } = req.body;
 
-            const vinculoImagem = req.file.path
+            const { idCategoria, nomeProduto, valorProduto } = req.body;
+
+            const vinculoImagem = `/uploads/imagens/${req.file.filename}`
 
             if (!idCategoria || isNaN(idCategoria) || !nomeProduto || isNaN(valorProduto)) {
                 return res.status(400).json({ message: "Insira dados válidos" })
             }
 
             const result = await produtoModel.cadastrarProduto(
-                idCategoria, nomeProduto, valorProduto, vinculoImagem, dataCad
+                idCategoria, nomeProduto, valorProduto, vinculoImagem
             )
 
             if (!req.file) {
@@ -83,22 +85,21 @@ const produtoController = {
 
         } catch (error) {
             console.error(error);
-            res.status(500).json({message: "Erro no Servidor",errorMessage: error.message,})
+            res.status(500).json({ message: "Erro no Servidor", errorMessage: error.message, })
         }
     },
 
-    deletarProduto:async (req,res) => {
+    deletarProduto: async (req, res) => {
         try {
-            
-            const {idProduto} = req.body;
 
-            if(!idProduto || isNaN(idProduto)){
-                return res.status(404).json({message: 'ID inválido'})
-            }
+            const id = req.params.id
 
-            
+            const result = await produtoModel.deletarProduto(id)
 
-            const result = await produtoModel.deletarProduto(idProduto)
+            if (!id || id <= 0) {
+                console.log(id);
+                return res.status(400).json({message: "Verifique o ID fornecido e tente novamente",})
+            };
 
             if (result.affectedRows === 1) {
                 res.status(201).json({
@@ -109,20 +110,22 @@ const produtoController = {
 
         } catch (error) {
             console.error(error);
-            res.status(500).json({message: "Erro no Servidor",errorMessage: error.message,})
+            res.status(500).json({ message: "Erro no Servidor", errorMessage: error.message, })
         }
     },
 
-    atualizarProduto: async (req,res) => {
+    atualizarProduto: async (req, res) => {
         try {
-            
-            const {nomeProduto, valorProduto, idProduto} = req.body;
-    
-            if(!nomeProduto || !valorProduto || isNaN(valorProduto)|| !idProduto || isNaN(idProduto)){
-                return res.status(404).json({message: 'Valores inválidos'})
+
+            const { nomeProduto, valorProduto } = req.body;
+
+            const id = req.query.id
+
+            if (!nomeProduto || !valorProduto || isNaN(valorProduto)) {
+                return res.status(404).json({ message: 'Valores inválidos' })
             }
 
-            const result = await produtoModel.atualizarProduto(nomeProduto, valorProduto);
+            const result = await produtoModel.atualizarProduto(nomeProduto, valorProduto, id);
 
             if (result.affectedRows === 1) {
                 res.status(201).json({
@@ -132,10 +135,9 @@ const produtoController = {
             }
 
         } catch (error) {
-            
+            console.error(error);
+            res.status(500).json({ message: "Erro no Servidor", errorMessage: error.message, })
         }
-        console.error(error);
-            res.status(500).json({message: "Erro no Servidor",errorMessage: error.message,})
     }
 
 

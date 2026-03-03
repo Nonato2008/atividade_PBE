@@ -17,7 +17,7 @@ const categoriaModel = {
     },
 
     deletar: async (idCategoria) => {
-        const sql = 'DELETE FROM categoria WHERE idProduto = ?'
+        const sql = 'DELETE FROM categoria WHERE idCategoria = ?'
         const values = [idCategoria]
         const [rows] = await pool.execute(sql,values)
         console.log(rows);

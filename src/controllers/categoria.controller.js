@@ -22,7 +22,7 @@ const categoriaController = {
     cadastrarCategoria: async (req, res) => {
         try {
 
-            const { dataCad, descricaoCategoria } = req.body;
+            const { descricaoCategoria } = req.body;
 
             if (!dataCad || !isNaN(descricaoCategoria) || !descricaoCategoria) {
                 return res.status(400).json({ message: "Insira dados válidos" })
@@ -50,13 +50,13 @@ const categoriaController = {
     deletarCategoria: async (req, res) => {
         try {
 
-            const { idCategoria } = req.body;
+            const id = req.params.id
 
             if (!idCategoria || isNaN(idCategoria)) {
                 return res.status(404).json({ message: 'ID inválido' })
             }
 
-            const result = await categoriaModel.deletar(idCategoria)
+            const result = await categoriaModel.deletar(id)
 
             if (result.affectedRows === 1) {
                 res.status(201).json({
